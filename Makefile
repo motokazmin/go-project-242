@@ -1,7 +1,7 @@
 # Makefile для сборки проекта Go
 
 # Название исполняемого файла, которое будет создано
-EXECUTABLE_NAME := path-size-utility
+EXECUTABLE_NAME := hexlet-path-size
 
 # Путь к главному файлу (пакету), который нужно скомпилировать
 MAIN_PACKAGE := ./cmd/hexlet-path-size
