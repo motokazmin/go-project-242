@@ -204,3 +204,37 @@ func TestGetSize_DirectoryWithoutHidden(t *testing.T) {
 		t.Errorf("Ожидается размер %s, получено: %s", expectedSize, parts[0])
 	}
 }
+
+// TestGetSize_Recursive проверяет рекурсивный подсчёт папки testdata/nested
+func TestGetSize_Recursive(t *testing.T) {
+	// Без флага recursive - только первый уровень (file1.txt = 6 байт)
+	resultNonRecursive, err := GetSize("testdata/nested", false, false, false)
+	if err != nil {
+		t.Fatalf("GetSize вернул ошибку: %v", err)
+	}
+
+	// С флагом recursive - все файлы (file1.txt 6 + file2.txt 6 + file3.txt 6 = 18 байт)
+	resultRecursive, err := GetSize("testdata/nested", true, false, false)
+	if err != nil {
+		t.Fatalf("GetSize вернул ошибку: %v", err)
+	}
+
+	parts1 := strings.Split(resultNonRecursive, "\t")
+	parts2 := strings.Split(resultRecursive, "\t")
+
+	if len(parts1) != 2 || len(parts2) != 2 {
+		t.Fatalf("Неправильный формат результата")
+	}
+
+	// Без recursive: только file1.txt (6 байт)
+	expectedNonRecursive := "6B"
+	if parts1[0] != expectedNonRecursive {
+		t.Errorf("Без recursive ожидается %s, получено: %s", expectedNonRecursive, parts1[0])
+	}
+
+	// С recursive: все файлы (18 байт)
+	expectedRecursive := "18B"
+	if parts2[0] != expectedRecursive {
+		t.Errorf("С recursive ожидается %s, получено: %s", expectedRecursive, parts2[0])
+	}
+}

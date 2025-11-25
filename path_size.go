@@ -22,8 +22,14 @@ func GetSize(path string, recursive, human, all bool) (string, error) {
 	if !stat.IsDir() {
 		size = stat.Size()
 	} else {
-		// Если это директория - суммируем размеры файлов первого уровня
-		size, err = getDirSize(path, all)
+		// Если это директория
+		if recursive {
+			// Рекурсивно суммируем все файлы и поддиректории
+			size, err = getDirSizeRecursive(path, all)
+		} else {
+			// Суммируем размеры файлов только первого уровня
+			size, err = getDirSize(path, all)
+		}
 		if err != nil {
 			return "", err
 		}
@@ -91,6 +97,44 @@ func getDirSize(dirPath string, all bool) (int64, error) {
 
 		// Пропускаем директории, берём только файлы первого уровня
 		if !entry.IsDir() {
+			info, err := entry.Info()
+			if err != nil {
+				continue // Пропускаем файлы, информацию о которых не получили
+			}
+			totalSize += info.Size()
+		}
+	}
+
+	return totalSize, nil
+}
+
+// getDirSizeRecursive рекурсивно суммирует размеры всех файлов в директории и подпапках
+// Если all == false, пропускает скрытые файлы и директории
+func getDirSizeRecursive(dirPath string, all bool) (int64, error) {
+	var totalSize int64
+
+	entries, err := os.ReadDir(dirPath)
+	if err != nil {
+		return 0, fmt.Errorf("не удалось прочитать директорию: %w", err)
+	}
+
+	for _, entry := range entries {
+		// Пропускаем скрытые файлы и директории, если all == false
+		if !all && IsHidden(entry.Name()) {
+			continue
+		}
+
+		fullPath := dirPath + "/" + entry.Name()
+
+		if entry.IsDir() {
+			// Рекурсивно подсчитываем размер поддиректории
+			size, err := getDirSizeRecursive(fullPath, all)
+			if err != nil {
+				continue // Пропускаем недоступные директории
+			}
+			totalSize += size
+		} else {
+			// Добавляем размер файла
 			info, err := entry.Info()
 			if err != nil {
 				continue // Пропускаем файлы, информацию о которых не получили
