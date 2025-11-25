@@ -21,8 +21,8 @@ func TestGetSize_File(t *testing.T) {
 		t.Fatalf("Результат должен содержать размер и путь, разделённые табуляцией: %s", result)
 	}
 
-	// Проверяем, что размер равен 1863 байтам
-	expectedSize := "1863"
+	// Проверяем, что размер равен 1863B байтам
+	expectedSize := "1863B"
 	if parts[0] != expectedSize {
 		t.Errorf("Ожидается размер %s, получено: %s", expectedSize, parts[0])
 	}
@@ -47,8 +47,8 @@ func TestGetSize_AnotherFile(t *testing.T) {
 		t.Fatalf("Результат должен содержать размер и путь: %s", result)
 	}
 
-	// Проверяем, что размер равен 4129 байтам
-	expectedSize := "4129"
+	// Проверяем, что размер равен 4129B байтам
+	expectedSize := "4129B"
 	if parts[0] != expectedSize {
 		t.Errorf("Ожидается размер %s, получено: %s", expectedSize, parts[0])
 	}
@@ -70,13 +70,58 @@ func TestGetSize_DirectoryFirstLevel(t *testing.T) {
 
 	// В LogViewer первого уровня три файла: 348 + 65 + 155 = 568 байт
 	// Папка logs игнорируется, так как это директория
-	expectedSize := "568"
+	expectedSize := "568B"
 	if parts[0] != expectedSize {
 		t.Errorf("Ожидается размер %s (348 + 65 + 155), получено: %s", expectedSize, parts[0])
 	}
 
 	if parts[1] != testDir {
 		t.Errorf("Ожидается путь %s, получено: %s", testDir, parts[1])
+	}
+}
+
+// TestFormatSize_Bytes проверяет форматирование байтов без human флага
+func TestFormatSize_Bytes(t *testing.T) {
+	tests := []struct {
+		bytes    int64
+		human    bool
+		expected string
+	}{
+		{0, false, "0B"},
+		{1, false, "1B"},
+		{123, false, "123B"},
+		{1023, false, "1023B"},
+	}
+
+	for _, test := range tests {
+		result := FormatSize(test.bytes, test.human)
+		if result != test.expected {
+			t.Errorf("FormatSize(%d, %v): ожидается %s, получено %s", test.bytes, test.human, test.expected, result)
+		}
+	}
+}
+
+// TestFormatSize_HumanReadable проверяет форматирование в человекочитаемый вид
+func TestFormatSize_HumanReadable(t *testing.T) {
+	tests := []struct {
+		bytes    int64
+		expected string
+	}{
+		{0, "0B"},
+		{512, "512B"},
+		{1024, "1.0KB"},
+		{1024 * 1024, "1.0MB"},
+		{1536 * 1024, "1.5MB"},               // 1.5 MB
+		{1024 * 1024 * 1024, "1.0GB"},        // 1 GB
+		{1024 * 1024 * 1024 * 2, "2.0GB"},    // 2 GB
+		{1024 * 1024 * 1024 * 1024, "1.0TB"}, // 1 TB
+	}
+
+	for _, test := range tests {
+		result := FormatSize(test.bytes, true)
+		if result != test.expected {
+			t.Errorf("FormatSize(%d, true): ожидается %s, получено %s", test.bytes, test.expected, result)
+		}
 	}
 }
 

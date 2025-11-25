@@ -8,6 +8,7 @@ import (
 // GetSize возвращает размер файла или директории в формате "<размер>\t<путь>"
 // Если путь — файл, возвращает его размер.
 // Если директория — суммирует размеры файлов первого уровня.
+// Если human == true, размер форматируется в человекочитаемый вид.
 func GetSize(path string, recursive, human, all bool) (string, error) {
 	// Проверяем существование пути
 	stat, err := os.Stat(path)
@@ -28,8 +29,39 @@ func GetSize(path string, recursive, human, all bool) (string, error) {
 		}
 	}
 
+	// Форматируем размер
+	sizeStr := FormatSize(size, human)
+
 	// Возвращаем результат в формате: <размер>\t<путь>
-	return fmt.Sprintf("%d\t%s", size, path), nil
+	return fmt.Sprintf("%s\t%s", sizeStr, path), nil
+}
+
+// FormatSize форматирует размер байт в удобный вид
+// Если human == false, возвращает строку вида "123B"
+// Если human == true, конвертирует в человекочитаемый формат
+// (единицы: B, KB, MB, GB, TB, PB, EB)
+func FormatSize(bytes int64, human bool) string {
+	if !human {
+		return fmt.Sprintf("%dB", bytes)
+	}
+
+	// Единицы и их размеры
+	units := []string{"B", "KB", "MB", "GB", "TB", "PB", "EB"}
+	size := float64(bytes)
+
+	for _, unit := range units {
+		if size < 1024 {
+			// Форматируем с 1 десятичным знаком для размеров >= 1KB
+			if unit == "B" {
+				return fmt.Sprintf("%.0f%s", size, unit)
+			}
+			return fmt.Sprintf("%.1f%s", size, unit)
+		}
+		size /= 1024
+	}
+
+	// На случай если размер больше EB
+	return fmt.Sprintf("%.1f%s", size*1024, units[len(units)-1])
 }
 
 // getDirSize суммирует размеры файлов в директории (только первый уровень)
@@ -54,4 +86,3 @@ func getDirSize(dirPath string) (int64, error) {
 
 	return totalSize, nil
 }
-
