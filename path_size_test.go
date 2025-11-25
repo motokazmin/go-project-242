@@ -10,7 +10,7 @@ func TestGetSize_File(t *testing.T) {
 	// Используем тестовый файл из testdata
 	testFile := "testdata/65012_melt.log"
 
-	result, err := GetSize(testFile, false, false, false)
+	result, err := GetPathSize(testFile, false, false, false)
 	if err != nil {
 		t.Fatalf("GetSize вернул ошибку: %v", err)
 	}
@@ -37,7 +37,7 @@ func TestGetSize_File(t *testing.T) {
 func TestGetSize_AnotherFile(t *testing.T) {
 	testFile := "testdata/65049_melt.log"
 
-	result, err := GetSize(testFile, false, false, false)
+	result, err := GetPathSize(testFile, false, false, false)
 	if err != nil {
 		t.Fatalf("GetSize вернул ошибку: %v", err)
 	}
@@ -58,7 +58,7 @@ func TestGetSize_AnotherFile(t *testing.T) {
 func TestGetSize_DirectoryFirstLevel(t *testing.T) {
 	testDir := "testdata/LogViewer"
 
-	result, err := GetSize(testDir, false, false, false)
+	result, err := GetPathSize(testDir, false, false, false)
 	if err != nil {
 		t.Fatalf("GetSize вернул ошибку: %v", err)
 	}
@@ -127,7 +127,7 @@ func TestFormatSize_HumanReadable(t *testing.T) {
 
 // TestGetSize_NonExistentPath проверяет ошибку для несуществующего пути
 func TestGetSize_NonExistentPath(t *testing.T) {
-	result, err := GetSize("testdata/nonexistent_file.txt", false, false, false)
+	result, err := GetPathSize("testdata/nonexistent_file.txt", false, false, false)
 
 	if err == nil {
 		t.Errorf("Ожидается ошибка для несуществующего пути, но получено: %s", result)
@@ -165,9 +165,9 @@ func TestGetSize_WithHiddenFiles(t *testing.T) {
 	// В testdata есть скрытые файлы (.hidden_file_1, .hidden_file_2)
 	// С флагом all они должны быть учтены
 
-	resultWith, err := GetSize("testdata", false, false, true)
+	resultWith, err := GetPathSize("testdata", false, false, true)
 	if err != nil {
-		t.Fatalf("GetSize вернул ошибку: %v", err)
+		t.Fatalf("GetPathSize вернул ошибку: %v", err)
 	}
 
 	// Разделяем результаты
@@ -188,7 +188,7 @@ func TestGetSize_WithHiddenFiles(t *testing.T) {
 // TestGetSize_DirectoryWithoutHidden проверяет, что скрытые файлы игнорируются по умолчанию
 func TestGetSize_DirectoryWithoutHidden(t *testing.T) {
 	// Тестируем с all=false
-	result, err := GetSize("testdata/LogViewer", false, false, false)
+	result, err := GetPathSize("testdata/LogViewer", false, false, false)
 	if err != nil {
 		t.Fatalf("GetSize вернул ошибку: %v", err)
 	}
@@ -208,15 +208,15 @@ func TestGetSize_DirectoryWithoutHidden(t *testing.T) {
 // TestGetSize_Recursive проверяет рекурсивный подсчёт папки testdata/nested
 func TestGetSize_Recursive(t *testing.T) {
 	// Без флага recursive - только первый уровень (file1.txt = 6 байт)
-	resultNonRecursive, err := GetSize("testdata/nested", false, false, false)
+	resultNonRecursive, err := GetPathSize("testdata/nested", false, false, false)
 	if err != nil {
-		t.Fatalf("GetSize вернул ошибку: %v", err)
+		t.Fatalf("GetPathSize вернул ошибку: %v", err)
 	}
 
 	// С флагом recursive - все файлы (file1.txt 6 + file2.txt 6 + file3.txt 6 = 18 байт)
-	resultRecursive, err := GetSize("testdata/nested", true, false, false)
+	resultRecursive, err := GetPathSize("testdata/nested", true, false, false)
 	if err != nil {
-		t.Fatalf("GetSize вернул ошибку: %v", err)
+		t.Fatalf("GetPathSize вернул ошибку: %v", err)
 	}
 
 	parts1 := strings.Split(resultNonRecursive, "\t")

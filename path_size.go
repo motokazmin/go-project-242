@@ -5,11 +5,11 @@ import (
 	"os"
 )
 
-// GetSize возвращает размер файла или директории в формате "<размер>\t<путь>"
+// GetPathSize возвращает размер файла или директории в формате "<размер>\t<путь>"
 // Если путь — файл, возвращает его размер.
 // Если директория — суммирует размеры файлов первого уровня.
 // Если human == true, размер форматируется в человекочитаемый вид.
-func GetSize(path string, recursive, human, all bool) (string, error) {
+func GetPathSize(path string, recursive, human, all bool) (string, error) {
 	// Проверяем существование пути
 	stat, err := os.Stat(path)
 	if err != nil {

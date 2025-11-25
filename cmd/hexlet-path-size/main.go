@@ -47,8 +47,8 @@ func main() {
 			all := cmd.Bool("all")
 			recursive := cmd.Bool("recursive")
 
-			// Вызываем функцию GetSize из библиотеки
-			result, err := code.GetSize(path, recursive, human, all)
+			// Вызываем функцию GetPathSize из библиотеки
+			result, err := code.GetPathSize(path, recursive, human, all)
 			if err != nil {
 				return fmt.Errorf("ошибка: %w", err)
 			}
