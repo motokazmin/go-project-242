@@ -48,13 +48,13 @@ func main() {
 			recursive := cmd.Bool("recursive")
 
 			// Вызываем функцию GetPathSize из библиотеки
-			result, err := code.GetPathSize(path, recursive, human, all)
+			sizeStr, err := code.GetPathSize(path, recursive, human, all)
 			if err != nil {
 				return fmt.Errorf("ошибка: %w", err)
 			}
 
 			// Выводим результат в формате: <размер>\t<путь>
-			fmt.Println(result)
+			fmt.Printf("%s\t%s\n", sizeStr, path)
 			return nil
 		},
 	}

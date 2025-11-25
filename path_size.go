@@ -5,15 +5,13 @@ import (
 	"os"
 )
 
-// GetPathSize возвращает размер файла или директории в формате "<размер>\t<путь>"
-// Если путь — файл, возвращает его размер.
-// Если директория — суммирует размеры файлов первого уровня.
-// Если human == true, размер форматируется в человекочитаемый вид.
-func GetPathSize(path string, recursive, human, all bool) (string, error) {
+// getSize возвращает размер файла или директории
+// Внутренняя функция для получения размера в байтах
+func getSize(path string, recursive, all bool) (int64, error) {
 	// Проверяем существование пути
 	stat, err := os.Stat(path)
 	if err != nil {
-		return "", fmt.Errorf("не удалось получить информацию о пути: %w", err)
+		return 0, fmt.Errorf("не удалось получить информацию о пути: %w", err)
 	}
 
 	var size int64
@@ -31,15 +29,30 @@ func GetPathSize(path string, recursive, human, all bool) (string, error) {
 			size, err = getDirSize(path, all)
 		}
 		if err != nil {
-			return "", err
+			return 0, err
 		}
+	}
+
+	return size, nil
+}
+
+// GetPathSize возвращает размер файла или директории в виде строки
+// Если путь — файл, возвращает его размер.
+// Если директория — суммирует размеры файлов первого уровня.
+// Если human == true, размер форматируется в человекочитаемый вид (например "2.0KB").
+// Если human == false, размер возвращается в байтах (например "2048B").
+func GetPathSize(path string, recursive, human, all bool) (string, error) {
+	// Получаем размер
+	size, err := getSize(path, recursive, all)
+	if err != nil {
+		return "", err
 	}
 
 	// Форматируем размер
 	sizeStr := FormatSize(size, human)
 
-	// Возвращаем результат в формате: <размер>\t<путь>
-	return fmt.Sprintf("%s\t%s", sizeStr, path), nil
+	// Возвращаем размер как строку
+	return sizeStr, nil
 }
 
 // IsHidden проверяет, является ли файл или директория скрытыми
