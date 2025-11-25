@@ -137,3 +137,70 @@ func TestGetSize_NonExistentPath(t *testing.T) {
 		t.Errorf("Ожидается пустой результат при ошибке, получено: %s", result)
 	}
 }
+
+// TestIsHidden проверяет функцию определения скрытых файлов
+func TestIsHidden(t *testing.T) {
+	tests := []struct {
+		filename string
+		expected bool
+	}{
+		{".hidden", true},
+		{".config", true},
+		{".bashrc", true},
+		{"file.txt", false},
+		{"README.md", false},
+		{"", false},
+	}
+
+	for _, test := range tests {
+		result := IsHidden(test.filename)
+		if result != test.expected {
+			t.Errorf("IsHidden(%q): ожидается %v, получено %v", test.filename, test.expected, result)
+		}
+	}
+}
+
+// TestGetSize_WithHiddenFiles проверяет учёт скрытых файлов
+func TestGetSize_WithHiddenFiles(t *testing.T) {
+	// В testdata есть скрытые файлы (.hidden_file_1, .hidden_file_2)
+	// С флагом all они должны быть учтены
+
+	resultWith, err := GetSize("testdata", false, false, true)
+	if err != nil {
+		t.Fatalf("GetSize вернул ошибку: %v", err)
+	}
+
+	// Разделяем результаты
+	parts := strings.Split(resultWith, "\t")
+
+	if len(parts) != 2 {
+		t.Fatalf("Неправильный формат результата")
+	}
+
+	// В testdata со скрытыми файлами: 5992 + 14 + 14 = 6020
+	expectedWith := "6020B"
+
+	if parts[0] != expectedWith {
+		t.Errorf("С флагом all ожидается %s, получено: %s", expectedWith, parts[0])
+	}
+}
+
+// TestGetSize_DirectoryWithoutHidden проверяет, что скрытые файлы игнорируются по умолчанию
+func TestGetSize_DirectoryWithoutHidden(t *testing.T) {
+	// Тестируем с all=false
+	result, err := GetSize("testdata/LogViewer", false, false, false)
+	if err != nil {
+		t.Fatalf("GetSize вернул ошибку: %v", err)
+	}
+
+	parts := strings.Split(result, "\t")
+	if len(parts) != 2 {
+		t.Fatalf("Результат должен содержать размер и путь: %s", result)
+	}
+
+	// В LogViewer первого уровня три XML файла: 348 + 65 + 155 = 568 байт
+	expectedSize := "568B"
+	if parts[0] != expectedSize {
+		t.Errorf("Ожидается размер %s, получено: %s", expectedSize, parts[0])
+	}
+}

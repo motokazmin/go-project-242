@@ -23,7 +23,7 @@ func GetSize(path string, recursive, human, all bool) (string, error) {
 		size = stat.Size()
 	} else {
 		// Если это директория - суммируем размеры файлов первого уровня
-		size, err = getDirSize(path)
+		size, err = getDirSize(path, all)
 		if err != nil {
 			return "", err
 		}
@@ -34,6 +34,15 @@ func GetSize(path string, recursive, human, all bool) (string, error) {
 
 	// Возвращаем результат в формате: <размер>\t<путь>
 	return fmt.Sprintf("%s\t%s", sizeStr, path), nil
+}
+
+// IsHidden проверяет, является ли файл или директория скрытыми
+// Файл считается скрытым, если его имя начинается с точки (.)
+func IsHidden(filename string) bool {
+	if len(filename) == 0 {
+		return false
+	}
+	return filename[0] == '.'
 }
 
 // FormatSize форматирует размер байт в удобный вид
@@ -65,7 +74,8 @@ func FormatSize(bytes int64, human bool) string {
 }
 
 // getDirSize суммирует размеры файлов в директории (только первый уровень)
-func getDirSize(dirPath string) (int64, error) {
+// Если all == false, пропускает скрытые файлы и директории
+func getDirSize(dirPath string, all bool) (int64, error) {
 	var totalSize int64
 
 	entries, err := os.ReadDir(dirPath)
@@ -74,6 +84,11 @@ func getDirSize(dirPath string) (int64, error) {
 	}
 
 	for _, entry := range entries {
+		// Пропускаем скрытые файлы и директории, если all == false
+		if !all && IsHidden(entry.Name()) {
+			continue
+		}
+
 		// Пропускаем директории, берём только файлы первого уровня
 		if !entry.IsDir() {
 			info, err := entry.Info()
