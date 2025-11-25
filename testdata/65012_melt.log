@@ -1,0 +1,39 @@
+2023/03/28 15:13:12.324264 krv VisitGroup, group doesn't exist:  0
+2023/03/28 15:13:12.324774 krv VisitGroup, setting True for :  0
+2023/03/28 15:13:12.496548 krv hUserState, input ChannelId is NULL
+
+
+
+
+2023/03/28 15:13:18.068173 krv PowerTrunkProvider startIndividualCall call...
+2023/03/28 15:13:18.068173 krv newIndividual call...
+2023/03/28 15:13:18.068173 krv ptConnection RequestPrivateCall, POINT_TO_POINT
+2023/03/28 15:13:18.068173 krv VisitGroup, group doesn't exist:  24503
+2023/03/28 15:13:18.068173 krv (c *ServiceRequests) GetChanges(), not changed list are []
+
+2023/03/28 15:13:18.068173 krv hUserState,  0 , Change is  {3 1 0 true}
+2023/03/28 15:13:18.068173 krv (c *Consumer) Visited result is  false
+2023/03/28 15:13:18.068173 krv priority_2  1 visited  false
+krv (c *Consumer) AttachPriorityManual, if cond  true , second cond  1073741824
+
+
+
+2023/03/28 15:13:18.118342 krv VisitGroup, group doesn't exist:  24503
+2023/03/28 15:13:27.101903 krv onIndividualUpdate call..., state is  1
+2023/03/28 15:13:27.101903 krv individualCall call..., state is  1
+2023/03/28 15:13:39.680839 krv VisitGroup, setting True for :  0
+2023/03/28 15:13:39.680839 krv (c *ServiceRequests) GetChanges(), not changed list are []
+2023/03/28 15:13:39.680839 krv hUserState,  0 , Change is  {3 0 0 true}
+2023/03/28 15:13:39.680839 krv (c *Consumer) Visited result is  false
+2023/03/28 15:13:39.680839 krv priority_2  0 visited  false
+2023/03/28 15:13:39.680839 krv (c *Consumer) Visited result is  false
+krv (c *Consumer) AttachPriorityManual, if cond  true , second cond  0 !!!!!!
+
+
+
+2023/03/28 15:13:39.680839 krv (c *Consumer) AttachPriorityManual, Removed = true
+
+
+2023/03/28 15:13:39.680839 krv Terminate private call...
+2023/03/28 15:13:39.680839 krv Finish the call 368: 211 -> 200, type is 0
+2023/03/28 15:13:39.680839 krv onIndividualUpdate call..., state is  0

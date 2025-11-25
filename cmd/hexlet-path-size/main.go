@@ -23,8 +23,8 @@ func main() {
 
 			path := cmd.Args().First()
 
-			// Вызываем функцию GetPathSize из библиотеки
-			result, err := code.GetPathSize(path, false, false, false)
+			// Вызываем функцию GetSize из библиотеки
+			result, err := code.GetSize(path, false, false, false)
 			if err != nil {
 				return fmt.Errorf("ошибка: %w", err)
 			}
