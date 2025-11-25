@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
+	"code"
 	cli "github.com/urfave/cli/v3"
 )
 
@@ -19,7 +21,16 @@ func main() {
 				return cli.ShowAppHelp(cmd)
 			}
 
-			log.Printf("Начинаем анализ пути: %s\n", cmd.Args().First())
+			path := cmd.Args().First()
+
+			// Вызываем функцию GetPathSize из библиотеки
+			result, err := code.GetPathSize(path, false, false, false)
+			if err != nil {
+				return fmt.Errorf("ошибка: %w", err)
+			}
+
+			// Выводим результат в формате: <размер>\t<путь>
+			fmt.Println(result)
 			return nil
 		},
 	}
