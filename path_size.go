@@ -8,7 +8,7 @@ import (
 
 // getSize возвращает размер файла или директории
 // Внутренняя функция для получения размера в байтах
-func getSize(path string, recursive, all bool) (int64, error) {
+func size(path string, recursive, all bool) (int64, error) {
 	// Проверяем существование пути
 	stat, err := os.Stat(path)
 	if err != nil {
@@ -37,7 +37,7 @@ func getSize(path string, recursive, all bool) (int64, error) {
 // Если human == false, размер возвращается в байтах (например "2048B").
 func GetPathSize(path string, recursive, human, all bool) (string, error) {
 	// Получаем размер
-	size, err := getSize(path, recursive, all)
+	size, err := size(path, recursive, all)
 	if err != nil {
 		return "", err
 	}
