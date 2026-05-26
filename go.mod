@@ -1,4 +1,4 @@
-module code1
+module code
 
 go 1.24.3
 

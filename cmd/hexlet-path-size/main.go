@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	code "code1"
+	"code"
 
 	cli "github.com/urfave/cli/v3"
 )
