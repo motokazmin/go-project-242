@@ -6,14 +6,15 @@ import (
 	"log"
 	"os"
 
-	"code"
+	code "code1"
+
 	cli "github.com/urfave/cli/v3"
 )
 
 func main() {
 	command := &cli.Command{
-		Name:  "hexlet-path-size",
-		Usage: "print size of a file or directory",
+		Name:      "hexlet-path-size",
+		Usage:     "print size of a file or directory",
 		UsageText: "hexlet-path-size [options] <path>\n\npath - path to a file or directory",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
